@@ -1,26 +1,32 @@
-import sys
 import os
+import sys
 import tkinter as tk
 from tkinter import messagebox
+from tkinter.filedialog import askopenfilename
+
+import matplotlib
 import numpy as np
 import pandas as pd
-import matplotlib
-matplotlib.use("TkAgg")
-from tkinter.filedialog import askopenfilename
-from matplotlib.widgets import RectangleSelector
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.widgets import RectangleSelector
+
+matplotlib.use("TkAgg")
+
 
 class RawDataWindow(tk.Toplevel):
-
     def __init__(self, parent, raw_data, indices, *args, **kwargs):
         tk.Toplevel.__init__(self, parent, *args, **kwargs)
         self.parent = parent
 
         self.raw_data = raw_data
 
-        self.hideFromScatter = tk.Button(self, text='Hide from Scatter', width=15, command=self.removeDataFromParent)
-        self.showOnScatter = tk.Button(self, text='Show on Scatter', width=15, command=self.addDataToParent)
+        self.hideFromScatter = tk.Button(
+            self, text="Hide from Scatter", width=15, command=self.removeDataFromParent
+        )
+        self.showOnScatter = tk.Button(
+            self, text="Show on Scatter", width=15, command=self.addDataToParent
+        )
         self.hideFromScatter.pack()
         self.showOnScatter.pack()
 
@@ -33,15 +39,15 @@ class RawDataWindow(tk.Toplevel):
             self.rawLines[index] = rawLine
             self.logLines[index] = logLine
         self.ax[0].legend(indices)
-        self.ax[0].set_title('Raw Data')
-        self.ax[1].set_title('Log scaled')
+        self.ax[0].set_title("Raw Data")
+        self.ax[1].set_title("Log scaled")
         plt.subplots_adjust(hspace=0.4)
         canvas = FigureCanvasTkAgg(self.fig, self)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
         toolbar = NavigationToolbar2Tk(canvas, self)
         toolbar.update()
-        self.fig.canvas.mpl_connect('pick_event', self.onpick)
+        self.fig.canvas.mpl_connect("pick_event", self.onpick)
 
     def onpick(self, event):
         index = int(event.artist.get_label())
